@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>مساعد الأم والطفل</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #questions {
+      margin-top: 20px;
+    }
+    #response {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-left: 4px solid #4CAF50;
+    }
+  </style>
+</head>
+<body>
+  <h2>اختار الفئة:</h2>
+  <button onclick="getQuestions('Child')">الطفل</button>
+  <button onclick="getQuestions('Mother')">الأم</button>
+
+  <div id="questions"></div>
+  <div id="response" style="margin-top: 20px;"></div>
+
+  <script>
+    // دالة للحصول على الأسئلة بناءً على الفئة المختارة
+    function getQuestions(category) {
+      fetch('/get_questions_by_category', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: category })
+      })
+      .then(res => res.json())
+      .then(data => {
+        let qDiv = document.getElementById("questions");
+        qDiv.innerHTML = "<h3>اختر سؤال:</h3>";
+        // إضافة الأزرار للأسئلة في الفئة المحددة
+        data.questions.forEach(q => {
+          let btn = document.createElement("button");
+          btn.innerText = q;
+          btn.onclick = () => askQuestion(q); // استدعاء دالة السؤال عند النقر على الزر
+          qDiv.appendChild(btn);
+          qDiv.appendChild(document.createElement("br"));
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById("response").innerHTML = `<p class="error">عذرًا، حدث خطأ أثناء تحميل الأسئلة. حاول مرة أخرى لاحقًا.</p>`;
+      });
+    }
+
+    // دالة إضافية لعرض الرد بعد اختيار سؤال (لإكمال المنطق)
+    function askQuestion(question) {
+      document.getElementById("response").innerHTML = `<p>تم اختيار السؤال: <strong>${question}</strong></p>`;
+    }
+  </script>
+</body>
+</html>
