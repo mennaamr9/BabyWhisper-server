@@ -1,25 +1,57 @@
+# # === Node.js ===
+# node_modules/
+# .env
+# package-lock.json
+
+# # === Python files in AI folder ===
+# AI/__pycache__/
+# AI/myenv/
+# AI/*.pkl
+# AI/*.csv
+# AI/*.zip
+# AI/*.ipynb_checkpoints/
+
+# # === General ===
+# uploads/
+# temp/
+# *.log
+# *.bak
+
+# # === System ===
+# .DS_Store
+# Thumbs.db
+
+# # === VS Code ===
+# .vscode/
+
+
 # === Node.js ===
 node_modules/
 .env
 package-lock.json
 
-# === Python files in AI folder ===
+# === Python environment & caches ===
+__pycache__/
+*.pyc
+myenv/
+
+# === AI project files ===
 AI/__pycache__/
 AI/myenv/
 AI/*.pkl
 AI/*.csv
 AI/*.zip
 AI/*.ipynb_checkpoints/
+AI/1Ss/                          # Exclude heavy .wav audio dataset
+AI/*.wav
 
-# === General ===
+# === Output, temp, and uploads ===
 uploads/
 temp/
 *.log
 *.bak
 
-# === System ===
+# === IDE / System-specific ===
+.vscode/
 .DS_Store
 Thumbs.db
-
-# === VS Code ===
-.vscode/
