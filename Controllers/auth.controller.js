@@ -268,9 +268,9 @@ const ResetPass = async (req, res) => {
 
     try {
 
-        const { newPassword } = req.body;
-        //get user by email 
-        const user = await User.findOne({ where: { passVerified: true } });
+        const { email, newPassword } = req.body;
+        const user = await User.findOne({ where: { email, passVerified: true } });
+
 
         if (!user) {
             return res.status(404).json({ message: "Reset code invalide or expired " });

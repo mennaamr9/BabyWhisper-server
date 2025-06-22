@@ -64,8 +64,8 @@ const startServer = async () => {
 
     setupAssociations();
 
-    await sequelize.sync({ alter: true });
-    console.log('All models synchronized');
+    // await sequelize.sync({ alter: true });
+    // console.log('All models synchronized');
 
   } catch (error) {
     console.error(' Database connection failed:', error);

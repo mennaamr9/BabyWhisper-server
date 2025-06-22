@@ -65,7 +65,7 @@ const updateUserById = async(req , res)  => {
         const userId = parseInt(req.params.id, 10); // Convert ID to number
         // const { User, Baby } = req.body; // Include babies array from request
 
-        const { name, email, password, profile_picture, number_of_baby, baby_name, age_in_months , birth_date , gender , medical_conditions  } = req.body; // Extract user & babies data
+        const { name, email, baby_name , birth_date , gender , medical_conditions  } = req.body; // Extract user & babies data
 
         if (isNaN(userId)) {
             return res.status(400).json({ message: 'Invalid user ID' });
@@ -80,13 +80,29 @@ const updateUserById = async(req , res)  => {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        const profile_picture = req.file
+        ? `http://localhost:8000/uploads/${req.file.filename}`
+        : user.profile_picture;
+
         // Update user details
-        await user.update({ name, email, password, profile_picture, number_of_baby });
+        await user.update({ name, email, profile_picture });
         let baby = await Baby.findOne({ where: { user_id: userId } });
+
+         // Calculate baby's age in months
+         const calculateAgeInMonths = (birthDate) => {
+            const birth = new Date(birthDate);
+            const now = new Date();
+            return (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
+        };
+        const age_in_months = calculateAgeInMonths(birth_date);
 
         if (baby) {
             // Update existing baby
-            await baby.update({ baby_name, age_in_months, birth_date, gender });
+            await baby.update({ 
+                baby_name,
+                age_in_months, 
+                birth_date, 
+                gender });
         } else {
             // If no baby exists, create a new one
             baby = await Baby.create({
