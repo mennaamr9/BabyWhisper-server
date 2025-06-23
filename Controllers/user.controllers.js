@@ -86,42 +86,54 @@ const updateUserById = async(req , res)  => {
 
         // Update user details
         await user.update({ name, email, profile_picture });
-        let baby = await Baby.findOne({ where: { user_id: userId } });
+        // let baby = await Baby.findOne({ where: { user_id: userId } });
 
-         // Calculate baby's age in months
-         const calculateAgeInMonths = (birthDate) => {
-            const birth = new Date(birthDate);
-            const now = new Date();
-            return (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
-        };
-        const age_in_months = calculateAgeInMonths(birth_date);
+        // get only the first baby from the request
+    // 👶 استخرج أول طفل من المصفوفة
+    let babies = [];
+    if (req.body.babies) {
+      babies = JSON.parse(req.body.babies);
+    }
 
-        if (baby) {
-            // Update existing baby
-            await baby.update({ 
-                baby_name,
-                age_in_months, 
-                birth_date, 
-                gender });
-        } else {
-            // If no baby exists, create a new one
-            baby = await Baby.create({
-                baby_name,
-                age_in_months,
-                birth_date,
-                gender,
-                medical_conditions,
-                user_id: userId,
-            });
-        }
+    const babyData = babies[0]; // فقط أول طفل
 
-        // Fetch updated user with babies
-        const updatedUser = await User.findByPk(userId, {
-            include: [{ model: Baby, as: "babies" }],
+    if (babyData) {
+      const age_in_months = (() => {
+        const birth = new Date(babyData.birth_date);
+        const now = new Date();
+        return (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
+      })();
+
+      let baby = await Baby.findOne({ where: { user_id: userId } });
+
+      if (baby) {
+        await baby.update({
+          baby_name: babyData.baby_name,
+          birth_date: babyData.birth_date,
+          gender: babyData.gender,
+          age_in_months,
+          medical_conditions: babyData.medical_conditions,
         });
+      } else {
+        await Baby.create({
+          baby_name: babyData.baby_name,
+          birth_date: babyData.birth_date,
+          gender: babyData.gender,
+          age_in_months,
+          medical_conditions: babyData.medical_conditions,
+          user_id: userId,
+        });
+      }
+    }
 
-        res.status(200).json({ message: 'User and babies updated successfully', user: updatedUser });
+    const updatedUser = await User.findByPk(userId, {
+      include: [{ model: Baby, as: "babies" }],
+    });
 
+    res.status(200).json({
+      message: "User and baby updated successfully",
+      user: updatedUser,
+    });
     } catch (error) {
         console.error('Database Error:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
