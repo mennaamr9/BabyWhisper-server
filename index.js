@@ -13,6 +13,7 @@ const notificationRouter = require('./Routes/notification.routes');
 const cryRecordsRouter = require('./Routes/cryRecording.routes');
 const chatbotRouter = require('./Routes/chatbot.routes');
 const tutorialsRouter = require('./Routes/tutorial.routes');
+const languageRoute = require('./Routes/language.routes')
 const authMiddleware = require('./middlewares/authMiddleware');
 const User = require('./db/Models/userModel');
 const Baby = require('./db/Models/babyModel');
@@ -24,6 +25,9 @@ const CryRecording = require('./db/Models/cryRecordingModel');
 const Notification = require('./db/Models/notificationModel');
 const setupAssociations = require('./db/Models/associations');
 const app = express();
+
+require('./corn/babyAgeReminder');
+
 
 
 //Middleware
@@ -41,6 +45,8 @@ app.use('/api/schedule', scheduleRouter);  // api/schedule/
 app.use('/api/notification', notificationRouter);  // api/notification/
 app.use('/api/records', authMiddleware, cryRecordsRouter);  // api/records/
 app.use('/api/chat', chatbotRouter);  // api/chat/
+app.use("/api/language", languageRoute); // api/translate
+
 
 app.use('/api/tutorials', tutorialsRouter);
 

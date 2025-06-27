@@ -89,7 +89,6 @@ const updateUserById = async(req , res)  => {
         // let baby = await Baby.findOne({ where: { user_id: userId } });
 
         // get only the first baby from the request
-    // 👶 استخرج أول طفل من المصفوفة
     let babies = [];
     if (req.body.babies) {
       babies = JSON.parse(req.body.babies);

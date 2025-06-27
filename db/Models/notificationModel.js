@@ -30,6 +30,10 @@ const User = require('./userModel');
         key: 'user_id',
       },
     },
+    age_in_months: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   },
   {
     tableName:"Notification",

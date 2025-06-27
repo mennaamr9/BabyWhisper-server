@@ -3,6 +3,7 @@ const express = require("express");
 const CryRecording = require('../db/Models/cryRecordingModel');
 const Baby = require('../db/Models/babyModel');
 const User = require('../db/Models/userModel');
+const Notification = require('../db/Models/notificationModel')
 const fs = require('fs');
 const axios = require('axios');
 const FormData = require('form-data');
@@ -62,6 +63,15 @@ const uploadRecords = async (req, res) => {
     });
 
     console.log('Recording saved:', newRecording);
+
+    
+       // Add notification after successful prediction
+       await Notification.create({
+          content: `Prediction Result: ${prediction}. Suggestion: ${suggestion}`,
+          type: "cry_analysis",
+          user_id: userId,
+       });
+
 
     res.status(200).json({
       message: 'Cry recording uploaded and saved',
